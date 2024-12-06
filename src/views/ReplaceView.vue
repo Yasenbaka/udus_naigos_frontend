@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import replaceBg from "@/assets/Replace/bg.jpg";
-import zhezhao from "@/assets/Home/zhezhao.png";
+import defaultAvatar from "@/assets/About/default_avatar.jpg";
 import {useRoute, useRouter} from "vue-router";
 import {onMounted, ref, watch} from "vue";
 import type {ReplaceParamImp} from "@/interface/ReplaceParamImp.ts";
 import type {UserArchiveImp} from "@/interface/UserArchiveImp.ts";
 import {useUserArchivePinia} from "@/stores/UserArchivePinia.ts";
+import ReplaceBgComp from "@/components/Replace/ReplaceBgComp.vue";
 const userArchivePinia = useUserArchivePinia();
 const router = useRouter();
 
@@ -18,7 +18,7 @@ const replaceParam = ref<ReplaceParamImp>({
 const userArchive = ref<UserArchiveImp | null>(null);
 
 function handleParam() {
-  window.localStorage.setItem('token', replaceParam.value.token.value);
+  window.localStorage.setItem('token', replaceParam.value.token.value as string);
   userArchivePinia.fetchUserArchive();
 }
 function handleJumpRouter() {
@@ -26,9 +26,9 @@ function handleJumpRouter() {
   setInterval(() => {
     if (jumpCount.value <= 0) {
       if (replaceParam.value.target.isHave) {
-        router.replace({name: replaceParam.value.target.value});
+        router.replace({name: replaceParam.value.target.value as string});
       } else {
-        router.replace({name: 'Home3'});
+        router.replace({name: 'Home'});
       }
     } else jumpCount.value--;
   }, 1000);
@@ -43,12 +43,15 @@ function returnOriginView() {
 }
 
 onMounted(() => {
+  window.localStorage.removeItem('token');
   const route = useRoute();
   const queryObj = route.query;
+  console.log('obj',queryObj);
   if (queryObj?.token) {
-    replaceParam.value.token = {isHave: true, value: queryObj.token};
+    console.log('tokne', queryObj.token);
+    replaceParam.value.token = {isHave: true, value: queryObj.token as string};
     if (queryObj.target) {
-      replaceParam.value.target = {isHave: true, value: queryObj.target};
+      replaceParam.value.target = {isHave: true, value: queryObj.target as string};
     }
     handleParam();
   } else {
@@ -63,14 +66,11 @@ watch(() => userArchivePinia.userArchive, (newVal: UserArchiveImp) => {
 </script>
 
 <template>
-  <div class="replace_bg_box">
-    <img class="zhezhao" :src="zhezhao" alt="zhezhao"/>
-    <img class="replace_bg" :src="replaceBg" alt="bg"/>
-  </div>
+  <ReplaceBgComp/>
   <header class="replace_header">
     <h3 class="status_box">
       {{queryStatus === 0? '正在处理重置参数！':
-      queryStatus === 1? 1 <= jumpCount? `处理完成！${jumpCount}秒后跳转指定页面！`: '如没有跳转，请手动跳转或反馈问题！':
+      queryStatus === 1? `处理完成！${jumpCount}秒后跳转指定页面！`:
           queryStatus === 2? `缺少必要的重置参数！${jumpCount}秒后返回原页面！`: '发生不可预测的异常！'}}
     </h3>
   </header>
@@ -81,8 +81,8 @@ watch(() => userArchivePinia.userArchive, (newVal: UserArchiveImp) => {
         <li>TARGET：{{replaceParam.target.isHave? replaceParam.target.value: 'NORMAL'}}</li>
       </ul>
     </div>
-    <div class="user_archive_box" v-if="userArchive">
-      <img class="avatar" :src="userArchive.avatar" alt="avatar"/>
+    <div class="user_archive_box" v-if="userArchive && replaceParam.token.isHave">
+      <img class="avatar" :src="userArchive?.avatar || defaultAvatar" alt="avatar"/>
       <div class="detail_box">
         <ul>
           <li>昵称#编号：{{`${userArchive.nickname} #${userArchive.id}`}}</li>
@@ -99,21 +99,6 @@ watch(() => userArchivePinia.userArchive, (newVal: UserArchiveImp) => {
 </template>
 
 <style scoped lang="sass">
-.replace_bg_box
-  position: fixed
-  width: 100%
-  max-height: 100vh
-  overflow: hidden
-  z-index: -1
-  .zhezhao
-    position: absolute
-    top: 0
-    left: 0
-    width: 100%
-    height: 100%
-  .replace_bg
-    min-width: 100%
-    z-index: -2
 .replace_header
   width: 90vw
   height: 60px

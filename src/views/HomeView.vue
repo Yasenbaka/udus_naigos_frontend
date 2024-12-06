@@ -1,27 +1,48 @@
 <script setup lang="ts">
-import {onMounted, ref, watch} from "vue";
-import type {UserArchiveImp} from "@/interface/UserArchiveImp.ts";
-import {useUserArchivePinia} from "@/stores/UserArchivePinia.ts";
-const userArchivePinia = useUserArchivePinia();
+import {onMounted, ref} from "vue";
+import HomeBgComp from "@/components/Home/HomeBgComp.vue";
+import HomeHeaderComp from "@/components/Home/HomeHeaderComp.vue";
+import HomeNoTokenComp from "@/components/Home/HomeNoTokenComp.vue";
+import HomeUCFIComp from "@/components/Home/HomeUCFIComp.vue";
+import HomeUIComp from "@/components/Home/HomeUIComp.vue";
 
-const userArchive = ref<UserArchiveImp | null>(null);
+const isToken = ref<boolean>(false);
 
 onMounted(() => {
-  userArchive.value = userArchivePinia.userArchive;
-})
-
-watch(() => userArchivePinia.userArchive, (newVal: UserArchiveImp) => {
-  userArchive.value = newVal;
+  isToken.value = !!window.localStorage.getItem('token');
 })
 </script>
 
 <template>
-  <header>
-    {{userArchive}}
-  </header>
-  <div>主界面，如果出现个人信息的JSON，证明成功带参转网。</div>
+  <HomeBgComp/>
+  <HomeHeaderComp/>
+  <div class="home_container" v-if="isToken">
+    <HomeUCFIComp/>
+    <HomeUIComp/>
+  </div>
+  <div class="home_container" v-else>
+    <HomeNoTokenComp/>
+  </div>
+  <div class="foot_notice">
+    <p>当你进入了这个主页，而不是功能页面，那就意味着你不对劲！</p>
+    <p>奶果服务站可没有按钮指向奶果空间管理站的主页，不要偷偷的来主页哦。</p>
+  </div>
 </template>
 
 <style scoped lang="sass">
-
+.home_container
+  margin: 30px auto 0 auto
+  width: 90vw
+  display: flex
+  flex-wrap: wrap
+  gap: 30px
+.foot_notice
+  width: 90vw
+  margin: 30px auto 0
+  text-align: center
+  color: white
+  font-size: 20px
+  padding: 20px
+  background-color: #2c3e5090
+  letter-spacing: 1px
 </style>
