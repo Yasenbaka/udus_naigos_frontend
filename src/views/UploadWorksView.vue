@@ -8,16 +8,20 @@ import {httpSpring} from "@/utils/http.ts";
 import {Editor, Toolbar} from "@wangeditor/editor-for-vue";
 const userArchivePinia = useUserArchivePinia();
 
-const editorRef = shallowRef() // 编辑器实例，必须用 shallowRef
-const toolbarConfig = {}
-const editorConfig = { placeholder: '请输入内容...' }
+const editorRef = shallowRef<Editor | null>(null); // 编辑器实例，必须用 shallowRef
+const toolbarConfig: Record<string, any> = {}
+const editorConfig = { placeholder: '请输入内容...您无需输入作品名的标题大字，当您在右侧输入作品名后，服务器会自动生成标题大字！作品下载地址和作品简介您可以自行在这里编辑，这时您就无需再在右侧输入了！' }
 
-const valueHtml = ref('<p>hello</p>')// 内容 HTML
+const valueHtml = ref<string>('')// 内容 HTML
 const userArchive = ref<UserArchiveImp>(userArchivePinia.userArchive);
 const allClassifyAndSubcategoryList = ref<{
   classify_list: Array<ThemeClassifyBriefImpl>;
   subcategory_list: Array<ThemeSubcategoryImpl>;
 } | null>(null);
+
+const uploadButtonClicked = () => {
+
+}
 
 onMounted(() => {
   httpSpring({
@@ -37,7 +41,7 @@ onBeforeUnmount(() => {
   editor.destroy()
 })
 
-const handleCreated = (editor) => {
+const handleCreated = (editor: Editor) => {
   editorRef.value = editor // 记录 editor 实例，重要！
 }
 
