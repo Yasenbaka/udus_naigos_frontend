@@ -25,12 +25,14 @@ export interface ThemeClassifyImpl {
     zhsg_name: string;
     en_name: string | null;
     router_name: string;
+    classify_value: string;
 }
 export interface ThemeClassifyBriefImpl {
     classify_id: string;
     cover_image: string | null;
     zhsg_name: string;
     router_name: string;
+    classify_value: string;
 }
 export interface ThemeSubcategoryImpl {
     subcategory: string;

@@ -13,7 +13,7 @@ const itemList: Array<{title: string, title_en: string, router_name: string}> = 
   {title: '作品修改', router_name: '', title_en: 'Update works'},
 ]
 
-const userArchive = ref<UserArchiveImp | null>(null);
+const userArchive = ref<UserArchiveImp>({...userArchivePinia.userArchive});
 
 onMounted(() => {
   if (window.localStorage.getItem('token')) {
