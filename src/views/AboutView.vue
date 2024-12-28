@@ -1,6 +1,7 @@
 <template>
   <div class="about">
     <h1>This is an about page</h1>
+    <img src="https://file.naigos.cn:52011/first0test/hina.png" alt="aba"/>
   </div>
 </template>
 

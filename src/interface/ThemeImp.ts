@@ -3,9 +3,9 @@ export interface ThemeImp {
     url: string | null;
     introduce: string | null;
     header_image: string | null;
-    details_image: string | null;
-    cost: number;
-    eject_image: string | null;
+    detail_html: string | null;
+    cost?: number;
+    eject_image?: string | null;
     theme_id: string;
     classify_id: string | null;
     author: string | null;

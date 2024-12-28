@@ -3,8 +3,9 @@ import {onMounted, ref} from "vue";
 import HomeBgComp from "@/components/Home/HomeBgComp.vue";
 import HomeHeaderComp from "@/components/Home/HomeHeaderComp.vue";
 import HomeNoTokenComp from "@/components/Home/HomeNoTokenComp.vue";
-import HomeUCFIComp from "@/components/Home/HomeUCFIComp.vue";
+import HomeUserComp from "@/components/Home/HomeUserComp.vue";
 import HomeUIComp from "@/components/Home/HomeUIComp.vue";
+import HomeFuncItemComp from "@/components/Home/HomeFuncItemComp.vue";
 
 const isToken = ref<boolean>(false);
 
@@ -17,16 +18,17 @@ onMounted(() => {
   <HomeBgComp/>
   <HomeHeaderComp/>
   <div class="home_container" v-if="isToken">
-    <HomeUCFIComp/>
+    <HomeUserComp/>
+    <HomeFuncItemComp/>
     <HomeUIComp/>
   </div>
   <div class="home_container" v-else>
     <HomeNoTokenComp/>
   </div>
-  <div class="foot_notice">
-    <p>当你进入了这个主页，而不是功能页面，那就意味着你不对劲！</p>
-    <p>奶果服务站可没有按钮指向奶果空间管理站的主页，不要偷偷的来主页哦。</p>
-  </div>
+<!--  <div class="foot_notice">-->
+<!--    <p>当你进入了这个主页，而不是功能页面，那就意味着你不对劲！</p>-->
+<!--    <p>奶果服务站可没有按钮指向奶果空间管理站的主页，不要偷偷的来主页哦。</p>-->
+<!--  </div>-->
 </template>
 
 <style scoped lang="sass">

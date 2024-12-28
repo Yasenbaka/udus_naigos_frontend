@@ -1,14 +1,20 @@
 <script setup lang="ts">
+import {useRouter} from "vue-router";
+const router = useRouter();
+
 const itemList: Array<{title: string, router_name: string, img_url: string | null, title_en: string}> = [
   {title: '学习笔记（上传）', router_name: '', img_url: null, title_en: 'Upload Learning notes'},
   {title: '博客文章（上传）', router_name: '', img_url: null, title_en: 'Upload Blog articles'},
-  {title: '作品成果（上传）', router_name: '', img_url: null, title_en: 'Upload Works'},
+  {title: '作品成果（上传）', router_name: 'UploadWorks', img_url: null, title_en: 'Upload Works'},
 ]
+const itemClicked = (routerName: string) => {
+  router.push({name: routerName});
+}
 </script>
 
 <template>
   <div class="home_upload_item_box">
-    <div class="home_upload_item" v-for="(item, index) in itemList" :key="index">
+    <div class="home_upload_item" v-for="(item, index) in itemList" :key="index" @click="itemClicked(item.router_name)">
       <img class="home_upload_item_bg" src="@/assets/Home/button_title_bg.svg" alt="button_img"/>
       <div class="home_upload_item_inner">
         <p>{{item.title}}</p>
