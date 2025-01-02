@@ -28,8 +28,11 @@ watch(() => userArchivePinia.userArchive, (newVal: UserArchiveImp) => {
       </ul>
     </div>
     <div class="home_user_space_box">
-      <p>存储空间：unknown B / 200 MB</p>
-      <button>进入存储空间</button>
+      <p class="home_user_space_detail">最大存储空间：200 MB</p>
+      <p class="home_user_space_detail">已用存储空间：0 MB</p>
+      <p class="home_user_space_detail">剩余存储空间：200 MB</p>
+      <p style="font-size: 18px">单击此卡条，进入个人奶果空间，管理个人存储内容</p>
+<!--      <button>进入存储空间</button>-->
     </div>
   </div>
 </template>
@@ -40,9 +43,6 @@ watch(() => userArchivePinia.userArchive, (newVal: UserArchiveImp) => {
   height: 300px
   display: flex
   gap: 30px
-  .home_user_space_box
-    background-color: #2c3e5090
-    flex: 1
   .home_user_card
     width: 30%
     height: 100%
@@ -64,4 +64,18 @@ watch(() => userArchivePinia.userArchive, (newVal: UserArchiveImp) => {
       top: 50%
       left: 50%
       transform: translate(-50%, -50%)
+  .home_user_space_box:hover
+    background-color: #2c3e5095
+    cursor: pointer
+  .home_user_space_box
+    transition: background-color .3s ease
+    background-color: #2c3e5080
+    flex: 1
+    color: white
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
+    .home_user_space_detail
+      font-size: 20px
 </style>
