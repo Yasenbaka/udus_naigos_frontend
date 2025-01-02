@@ -28,7 +28,8 @@ watch(() => userArchivePinia.userArchive, (newVal: UserArchiveImp) => {
       </ul>
     </div>
     <div class="home_user_space_box">
-
+      <p>存储空间：unknown B / 200 MB</p>
+      <button>进入存储空间</button>
     </div>
   </div>
 </template>
