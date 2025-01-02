@@ -2,10 +2,10 @@
 import defaultAvatar from "@/assets/About/default_avatar.jpg";
 import {useUserArchivePinia} from "@/stores/UserArchivePinia.ts";
 import {onMounted, ref, watch} from "vue";
-import type {UserArchiveImp} from "@/interface/UserArchiveImp.ts";
+import type {UserArchiveImpl} from "@/interface/UserArchiveImpl.ts";
 const userArchivePinia = useUserArchivePinia();
 
-const userArchive = ref<UserArchiveImp>({...userArchivePinia.userArchive});
+const userArchive = ref<UserArchiveImpl>({...userArchivePinia.userArchive});
 
 onMounted(() => {
   if (window.localStorage.getItem('token')) {
@@ -13,7 +13,7 @@ onMounted(() => {
   }
 })
 
-watch(() => userArchivePinia.userArchive, (newVal: UserArchiveImp) => {
+watch(() => userArchivePinia.userArchive, (newVal: UserArchiveImpl) => {
   userArchive.value = newVal;
 })
 </script>

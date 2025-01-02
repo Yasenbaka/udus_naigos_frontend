@@ -1,4 +1,4 @@
-export interface UserArchiveImp {
+export interface UserArchiveImpl {
     id: number;
     qq_id: number;
     nickname: string;

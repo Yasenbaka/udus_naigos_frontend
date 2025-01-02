@@ -3,7 +3,7 @@ import defaultAvatar from "@/assets/About/default_avatar.jpg";
 import {useRoute, useRouter} from "vue-router";
 import {onMounted, ref, watch} from "vue";
 import type {ReplaceParamImp} from "@/interface/ReplaceParamImp.ts";
-import type {UserArchiveImp} from "@/interface/UserArchiveImp.ts";
+import type {UserArchiveImpl} from "@/interface/UserArchiveImpl.ts";
 import {useUserArchivePinia} from "@/stores/UserArchivePinia.ts";
 import ReplaceBgComp from "@/components/Replace/ReplaceBgComp.vue";
 const userArchivePinia = useUserArchivePinia();
@@ -15,7 +15,7 @@ const replaceParam = ref<ReplaceParamImp>({
   token: {isHave: false, value: null},
   target: {isHave: false, value: null},
 });
-const userArchive = ref<UserArchiveImp | null>(null);
+const userArchive = ref<UserArchiveImpl | null>(null);
 
 function handleParam() {
   window.localStorage.setItem('token', replaceParam.value.token.value as string);
@@ -63,8 +63,8 @@ onMounted(() => {
   }
 })
 
-watch(() => userArchivePinia.userArchive, (newVal: UserArchiveImp) => {
-  userArchive.value = newVal as UserArchiveImp;
+watch(() => userArchivePinia.userArchive, (newVal: UserArchiveImpl) => {
+  userArchive.value = newVal as UserArchiveImpl;
   handleJumpRouter();
 })
 </script>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import '@opentiny/fluent-editor/style.css';
 import { ref, onMounted, watch } from 'vue'
-import type {UserArchiveImp} from "@/interface/UserArchiveImp.ts";
+import type {UserArchiveImpl} from "@/interface/UserArchiveImpl.ts";
 import {useUserArchivePinia} from "@/stores/UserArchivePinia.ts";
 import type {ThemeClassifyBriefImpl, ThemeImp, ThemeSubcategoryImpl} from "@/interface/ThemeImp.ts";
 import {httpSpring} from "@/utils/http.ts";
@@ -20,7 +20,7 @@ const toolbarConst = [
 ]
 
 const valueHtml = ref<string>('<p>请在此做您的编辑！</p>')
-const userArchive = ref<UserArchiveImp | null>(null);
+const userArchive = ref<UserArchiveImpl | null>(null);
 const allClassifyAndSubcategoryList = ref<{
   classify_list: Array<ThemeClassifyBriefImpl>;
   subcategory_list: Array<ThemeSubcategoryImpl>;
@@ -183,7 +183,7 @@ onMounted(() => {
   }).catch(err => {console.error(err)});
 })
 
-watch(() => userArchivePinia.userArchive, (newVal: UserArchiveImp) => {userArchive.value = newVal})
+watch(() => userArchivePinia.userArchive, (newVal: UserArchiveImpl) => {userArchive.value = newVal})
 </script>
 
 <template>
