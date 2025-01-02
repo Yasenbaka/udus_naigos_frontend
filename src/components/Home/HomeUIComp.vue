@@ -4,7 +4,7 @@ const router = useRouter();
 
 const itemList: Array<{title: string, router_name: string, img_url: string | null, title_en: string}> = [
   {title: '学习笔记（上传）', router_name: '', img_url: null, title_en: 'Upload Learning notes'},
-  {title: '博客文章（上传）', router_name: '', img_url: null, title_en: 'Upload Blog articles'},
+  {title: '博客文章（上传）', router_name: 'UploadBlog', img_url: null, title_en: 'Upload Blog articles'},
   {title: '作品成果（上传）', router_name: 'UploadWorks', img_url: null, title_en: 'Upload Works'},
 ]
 const itemClicked = (routerName: string) => {

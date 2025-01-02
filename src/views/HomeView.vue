@@ -6,11 +6,17 @@ import HomeNoTokenComp from "@/components/Home/HomeNoTokenComp.vue";
 import HomeUserComp from "@/components/Home/HomeUserComp.vue";
 import HomeUIComp from "@/components/Home/HomeUIComp.vue";
 import HomeFuncItemComp from "@/components/Home/HomeFuncItemComp.vue";
+import {useIsHomeReloadPinia} from "@/stores/IsHomeReloadPinia.ts";
+const isHomeReloadPinia = useIsHomeReloadPinia();
 
 const isToken = ref<boolean>(false);
 
 onMounted(() => {
   isToken.value = !!window.localStorage.getItem('token');
+  // if (!isHomeReloadPinia.isHomeReload) {
+  //   isHomeReloadPinia.changeStateTrue();
+  //   window.location.reload();
+  // }
 })
 </script>
 

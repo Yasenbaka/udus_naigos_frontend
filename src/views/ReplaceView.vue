@@ -21,13 +21,16 @@ function handleParam() {
   window.localStorage.setItem('token', replaceParam.value.token.value as string);
   userArchivePinia.fetchUserArchive();
 }
+
 function handleJumpRouter() {
   queryStatus.value = 1;
-  setInterval(() => {
+  const intervalId = setInterval(() => {
     if (jumpCount.value <= 0) {
       if (replaceParam.value.target.isHave) {
+        clearInterval(intervalId);
         router.replace({name: replaceParam.value.target.value as string});
       } else {
+        clearInterval(intervalId);
         router.replace({name: 'Home'});
       }
     } else jumpCount.value--;
@@ -36,8 +39,11 @@ function handleJumpRouter() {
 
 function returnOriginView() {
   queryStatus.value = 2;
-  setInterval(() => {
-    if (jumpCount.value <= 0) window.history.back();
+  const intervalId = setInterval(() => {
+    if (jumpCount.value <= 0) {
+      clearInterval(intervalId);
+      window.history.back();
+    }
     else jumpCount.value--;
   }, 1000)
 }
@@ -46,9 +52,7 @@ onMounted(() => {
   window.localStorage.removeItem('token');
   const route = useRoute();
   const queryObj = route.query;
-  console.log('obj',queryObj);
   if (queryObj?.token) {
-    console.log('tokne', queryObj.token);
     replaceParam.value.token = {isHave: true, value: queryObj.token as string};
     if (queryObj.target) {
       replaceParam.value.target = {isHave: true, value: queryObj.target as string};
