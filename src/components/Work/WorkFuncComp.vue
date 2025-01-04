@@ -7,6 +7,7 @@ interface ItemImpl {
 }
 const itemList: Array<ItemImpl> = [
   {title: '所有作品', router_name: 'Work'},
+  {title: '发布作品', router_name: 'UploadWorks'},
   {title: '评论管理', router_name: 'WorkComment'},
   {title: '反馈管理', router_name: 'WorkFeedback'},
 ]
