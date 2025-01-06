@@ -3,14 +3,15 @@ import {useRoute, useRouter} from "vue-router";
 import {onMounted, ref} from "vue";
 import {httpSpring} from "@/utils/http.ts";
 import type {ThemeImp} from "@/interface/ThemeImp.ts";
+import {showExceptionNotice, showMessageNotice} from "@/utils/MsgNotific.ts";
 const route = useRoute();
 const router = useRouter();
 
 interface ItemImpl{
-  title: string; router_name: string;
+  title: string; router_name: string; explain?: string;
 }
 const itemList: Array<ItemImpl> = [
-  {title: '修改', router_name: 'WorkEdit'},
+  {title: '修改', router_name: 'WorkEdit', explain: '仅对作品文章的内容进行修改'},
   {title: '删除', router_name: 'WorkDelete'},
   {title: '评论', router_name: 'WorkComment'},
 ]
@@ -27,10 +28,10 @@ const itemClicked = (item: ItemImpl) => {
       params: {theme_id: route.query.theme_id}
     }).then(res => {
       if (res?.data?.code === 0) {
-        alert(res?.data?.data);
+        showMessageNotice('green', res?.data?.data);
         router.back();
-      } else alert(res?.data?.message);
-    })
+      } else showMessageNotice('red', res?.data?.message);
+    }).catch(() => {showExceptionNotice();})
   }
   switch (item.router_name) {
     case 'WorkDelete': delectTheme(); break;
@@ -70,7 +71,7 @@ onMounted(() => {
           <p class="work_detail_theme_introduce" v-if="themeDetail.introduce">{{themeDetail.introduce}}</p>
         </div>
         <div class="work_detail_item_box">
-          <div class="work_detail_item" v-for="(item, index) in itemList" :key="index" @click="itemClicked(item)">{{item.title}}</div>
+          <div class="work_detail_item" v-for="(item, index) in itemList" :key="index" @click="itemClicked(item)" :title="item?.explain || undefined">{{item.title}}</div>
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@ import {onMounted, ref} from "vue";
 import type {ThemeBriefImpl} from "@/interface/ThemeImp.ts";
 import {httpSpring} from "@/utils/http.ts";
 import {useRouter} from "vue-router";
+import {showExceptionNotice, showMessageNotice} from "@/utils/MsgNotific.ts";
 const router = useRouter();
 
 const themeList = ref<Array<ThemeBriefImpl> | null>(null);
@@ -66,10 +67,8 @@ function fetchAllThemeBrief() {
       themeList.value = res.data?.data;
       themeListShow.value = res.data?.data;
       console.log(themeList.value);
-    } else {
-      alert(res?.data?.message);
-    }
-  })
+    } else showMessageNotice('red', res?.data?.message);
+  }).catch(() => {showExceptionNotice();})
 }
 onMounted(() => {
   fetchAllThemeBrief();

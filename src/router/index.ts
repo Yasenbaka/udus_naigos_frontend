@@ -7,6 +7,7 @@ import UploadBlogRouter from "@/router/RouterList/UploadBlogRouter.ts";
 import NoteRouter from "@/router/RouterList/NoteRouter.ts";
 import BlogRouter from "@/router/RouterList/BlogRouter.ts";
 import WorkRouter from "@/router/RouterList/WorkRouter.ts";
+import WorkEditView from "@/components/Work/WorkEditView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,6 +18,7 @@ const router = createRouter({
     NoteRouter,
     BlogRouter,
     WorkRouter,
+    {path: '/edit_work', name: 'WorkEdit', component: WorkEditView},
     UploadWorksRouter,
     UploadBlogRouter
   ],
