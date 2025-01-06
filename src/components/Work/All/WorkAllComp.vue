@@ -10,7 +10,7 @@ const themeListShow = ref<Array<ThemeBriefImpl> | null>(null);
 const searchInputText = ref<string | null>(null);
 
 const itemClicked = (theme_id: string) => {
-  router.replace({name: 'WorkDetail', query: {theme_id: theme_id}});
+  router.push({name: 'WorkDetail', query: {theme_id: theme_id}});
 }
 
 const searchRemoveClicked = () => {

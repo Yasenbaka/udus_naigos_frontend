@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import {onMounted, ref} from "vue";
 import {httpSpring} from "@/utils/http.ts";
 import type {ThemeImp} from "@/interface/ThemeImp.ts";
 const route = useRoute();
+const router = useRouter();
 
 interface ItemImpl{
   title: string; router_name: string;
@@ -15,6 +16,27 @@ const itemList: Array<ItemImpl> = [
 ]
 
 const themeDetail = ref<ThemeImp | null>(null);
+
+const itemClicked = (item: ItemImpl) => {
+  if (!route.query.theme_id) return;
+  function delectTheme() {
+    httpSpring({
+      url: 'api/theme/delete',
+      method: 'DELETE',
+      headers: {Authorization: window.localStorage.getItem('token')},
+      params: {theme_id: route.query.theme_id}
+    }).then(res => {
+      if (res?.data?.code === 0) {
+        alert(res?.data?.data);
+        router.back();
+      } else alert(res?.data?.message);
+    })
+  }
+  switch (item.router_name) {
+    case 'WorkDelete': delectTheme(); break;
+    default: break;
+  }
+}
 
 function fetchThemeDetail(theme_id: string) {
   httpSpring({
@@ -48,7 +70,7 @@ onMounted(() => {
           <p class="work_detail_theme_introduce" v-if="themeDetail.introduce">{{themeDetail.introduce}}</p>
         </div>
         <div class="work_detail_item_box">
-          <div class="work_detail_item" v-for="(item, index) in itemList" :key="index">{{item.title}}</div>
+          <div class="work_detail_item" v-for="(item, index) in itemList" :key="index" @click="itemClicked(item)">{{item.title}}</div>
         </div>
       </div>
     </div>
