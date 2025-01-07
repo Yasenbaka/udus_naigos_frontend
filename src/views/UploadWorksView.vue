@@ -8,6 +8,8 @@ import {httpSpring} from "@/utils/http.ts";
 const userArchivePinia = useUserArchivePinia();
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css"
+import {FluentEditor} from "@opentiny/fluent-editor/types/fluent-editor";
+import {showExceptionNotice, showMessageNotice} from "@/utils/MsgNotific.ts";
 
 const toolbarConst = [
   ['undo', 'redo', 'clean'],
@@ -91,30 +93,6 @@ const handleFileChange = (event: Event) => {
   }
 };
 
-// 处理文件改变事件
-// const handleFileChange = (event: Event) => {
-//   const target = event.target as HTMLInputElement;
-//   const file = target.files?.item(0);
-//
-//   if (file && file.type.startsWith('image/')) {
-//     const reader = new FileReader();
-//
-//     reader.onload = (e: ProgressEvent<FileReader>) => {
-//       // 将读取到的文件内容（Base64 编码）赋值给 imageDataUrl
-//       imageDataUrl.value = (e.target as FileReader).result as string;
-//       console.log(imageDataUrl.value);
-//     };
-//
-//     reader.onerror = (error) => {
-//       console.error('Error reading file:', error);
-//     };
-//
-//     reader.readAsDataURL(file);
-//   } else {
-//     console.warn('Please select a valid image file.');
-//   }
-// };
-
 const uploadButtonClicked = () => {
   if (userArchive.value) themeForm.value.author = userArchive.value.group_real_user_id;
   else {
@@ -146,10 +124,27 @@ const uploadButtonClicked = () => {
     } else alert(res?.data?.message);
   }).catch(err => {console.error(err); alert('未知异常！')})
 }
+
+let editor: FluentEditor | null = null;
+function editorImageHandler(image: File, callback: (imageUrl: string) => void) {
+  const data = new FormData();
+  data.append('file', image, Date.now().toString());
+  httpSpring({
+    url: 'api/file/upload',
+    method: 'POST',
+    headers: {"Content-Type": "multipart/form-data", Authorization: window.localStorage.getItem('token')},
+    data: data
+  }).then(res => {
+    if (res?.data?.code === 0){
+      callback(res?.data?.data);
+    } else showMessageNotice('red', res?.data?.message);
+  }).catch(err => {console.error(err); showExceptionNotice();})
+
+}
 function initEditor() {
   import("@opentiny/fluent-editor").then(mod => {
     const FluentEditor = mod.default;
-    const editor = new FluentEditor('#editor', {
+    editor = new FluentEditor('#editor', {
       theme: 'snow',
       modules: {
         toolbar: [
@@ -163,13 +158,27 @@ function initEditor() {
           ['link', 'image', 'file', 'better-table'],
           ['emoji', 'video', 'formula', 'fullscreen'],
         ]
+      },
+      uploadOption: {
+        imageUpload({ file, callback }) {
+          editorImageHandler(file, imageUrl => {
+            callback({
+              code: 0,
+              message: 'Upload success!',
+              data: {
+                imageUrl,
+              },
+            });
+          });
+        },
       }
     });
     editor.root.innerHTML = valueHtml.value;
     editor.on('text-change', () => {
-      valueHtml.value = editor.root.innerHTML;
+      valueHtml.value = editor?.root.innerHTML || '';
       console.log(valueHtml.value);
     });
+    editor.on('change', () => {console.log("变化")})
   })
 }
 onMounted(() => {
@@ -189,6 +198,7 @@ watch(() => userArchivePinia.userArchive, (newVal: UserArchiveImpl) => {userArch
 </script>
 
 <template>
+<!--  <input type="file" ref="editorImageInput" style="display: none;" @change="handleEditorImageUpload" />-->
   <header class="upload_works_header">
     <p class="upload_works_header_name">{{`${userArchive?.nickname|| '未命名'}`}}</p>
     <p class="upload_works_header_title">上传您的作品成果</p>

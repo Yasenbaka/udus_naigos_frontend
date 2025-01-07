@@ -12,7 +12,7 @@
     "lint": "eslint . --fix"
   },
   "dependencies": {
-    "@opentiny/fluent-editor": "^3.23.2",
+    "@opentiny/fluent-editor": "^3.25.0",
     "cropperjs": "^1.6.2",
     "element-plus": "^2.9.2",
     "pinia": "^2.2.6",
