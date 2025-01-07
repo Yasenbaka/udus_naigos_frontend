@@ -6,6 +6,8 @@ import {useUserArchivePinia} from "@/stores/UserArchivePinia.ts";
 import type {ThemeClassifyBriefImpl, ThemeImp, ThemeSubcategoryImpl} from "@/interface/ThemeImp.ts";
 import {httpSpring} from "@/utils/http.ts";
 const userArchivePinia = useUserArchivePinia();
+import Cropper from "cropperjs";
+import "cropperjs/dist/cropper.css"
 
 const toolbarConst = [
   ['undo', 'redo', 'clean'],

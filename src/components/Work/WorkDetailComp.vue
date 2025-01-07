@@ -20,6 +20,9 @@ const themeDetail = ref<ThemeImp | null>(null);
 
 const itemClicked = (item: ItemImpl) => {
   if (!route.query.theme_id) return;
+  function editTheme() {
+    router.push({name: 'WorkEdit', query: {theme_id: route.query.theme_id}});
+  }
   function delectTheme() {
     httpSpring({
       url: 'api/theme/delete',
@@ -34,6 +37,7 @@ const itemClicked = (item: ItemImpl) => {
     }).catch(() => {showExceptionNotice();})
   }
   switch (item.router_name) {
+    case 'WorkEdit': editTheme(); break;
     case 'WorkDelete': delectTheme(); break;
     default: break;
   }
