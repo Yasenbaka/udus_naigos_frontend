@@ -171,7 +171,6 @@ function initEditor() {
            border: #DE91A9FF 1px solid;overflow: hidden"></div>
       </div>
     </div>
-
   </el-dialog>
   <header class="work_edit_header">
     <h1>修改作品文章</h1>

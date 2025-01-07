@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import '@opentiny/fluent-editor/style.css';
-import { ref, onMounted, watch } from 'vue'
+import {ref, onMounted, watch, nextTick} from 'vue'
 import type {UserArchiveImpl} from "@/interface/UserArchiveImpl.ts";
 import {useUserArchivePinia} from "@/stores/UserArchivePinia.ts";
 import type {ThemeClassifyBriefImpl, ThemeImp, ThemeSubcategoryImpl} from "@/interface/ThemeImp.ts";
@@ -8,7 +8,7 @@ import {httpSpring} from "@/utils/http.ts";
 const userArchivePinia = useUserArchivePinia();
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css"
-import {FluentEditor} from "@opentiny/fluent-editor/types/fluent-editor";
+import FluentEditor from "@opentiny/fluent-editor/types/fluent-editor";
 import {showExceptionNotice, showMessageNotice} from "@/utils/MsgNotific.ts";
 
 const toolbarConst = [
@@ -40,58 +40,68 @@ const themeCSForm = ref<{
     category_value: string;
   }
 }>({classify: {classify_id: null, classify_value: ''}, subcategory: {subcategory: '', category_value: ''}});
-// 使用 ref 来管理文件输入元素和图片数据的 URL
-const fileInputRef = ref<HTMLInputElement | null>(null);
 const imageDataUrl = ref<string | null>(null);
+const copperShow = ref<boolean>(false);
+const coverImageValue = ref<string | null>(null);
+const coverInputRef = ref<HTMLInputElement | null>(null);
+
+let coverFilename: string | undefined = undefined;
+
+let cropper: Cropper | null = null;
+const triggerInput = () => {if (coverInputRef.value) coverInputRef.value.click();}
+const initCropper = () => {
+  if (cropper !== null) cropper.destroy();
+  const image = document.getElementById("coverImage") as HTMLImageElement;
+  cropper = new Cropper(image, {
+    viewMode: 1, aspectRatio: 250/130, cropBoxResizable: false, toggleDragModeOnDblclick: false, movable: false, preview: '.image_preview'
+  })
+}
+const selectCoverFile = (e: Event) => {
+  coverImageValue.value = null;
+  const {files} = e.target as HTMLInputElement;
+  if (!files || !files.length) return;
+  const file = files[0];
+  coverFilename = file.name;
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onloadend = (e: Event) => {
+    coverImageValue.value = String(reader.result);
+    if (coverInputRef.value) coverInputRef.value.value = "";
+    nextTick(() => {initCropper();})
+  }
+}
+const uploadCoverClicked = () => {
+  const cropperCanvas = cropper?.getCroppedCanvas({
+    width: 250, height: 130, imageSmoothingEnabled: true, imageSmoothingQuality: "high"
+  });
+  cropperCanvas?.toBlob(blob => {
+    if (blob) {
+      console.log(blob);
+      const fileName = `${Date.now()}_${coverFilename}`;
+      const formData = new FormData();
+      formData.append("file", blob, fileName);
+      httpSpring({
+        url: "api/file/upload",
+        method: "POST",
+        headers: {"Content-Type": "multipart/form-data", Authorization: window.localStorage.getItem("token")},
+        data: formData
+      }).then(res => {
+        if (res?.data?.code === 0) {
+          showMessageNotice('green', res?.data?.message);
+          imageDataUrl.value = res?.data?.data;
+          copperShow.value = false;
+        } else showMessageNotice('red', res?.data?.message);
+      }).catch(err => {console.error(err); showExceptionNotice();})
+    }
+  })
+}
 
 // 触发文件输入元素的点击事件
 const triggerFileInput = () => {
-  if (fileInputRef.value) {
-    fileInputRef.value.click();
-  }
+  copperShow.value = true;
 };
 
 const deleteImageClicked = () => {imageDataUrl.value = null;}
-
-const handleFileChange = (event: Event) => {
-  const input = event.target as HTMLInputElement;
-  if (input.files && input.files[0]) {
-    const file = input.files[0];
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        // 设置 canvas 的大小为 250x130
-        canvas.width = 250;
-        canvas.height = 130;
-        // 计算切割区域和缩放比例
-        let sx = 0, sy = 0, sWidth = img.width, sHeight = img.height;
-        const dx = 0, dy = 0, dWidth = 250, dHeight = 130;
-        // 根据图片宽高比调整切割区域
-        const aspectRatio = img.width / img.height;
-        if (aspectRatio > (250 / 130)) {
-          // 图片更宽，按高度切割
-          sWidth = sHeight * (250 / 130);
-          sx = (img.width - sWidth) / 2;
-        } else {
-          // 图片更高或等比，按宽度切割
-          sHeight = sWidth / (250 / 130);
-          sy = (img.height - sHeight) / 2;
-        }
-        // 绘制切割后的图片到 canvas 上
-        if (ctx) ctx.drawImage(img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-        // 将 canvas 内容转换为 Base64
-        imageDataUrl.value = canvas.toDataURL('image/png');
-      };
-
-      img.src = (e.target as FileReader).result as string;
-    };
-
-    reader.readAsDataURL(file);
-  }
-};
 
 const uploadButtonClicked = () => {
   if (userArchive.value) themeForm.value.author = userArchive.value.group_real_user_id;
@@ -139,7 +149,20 @@ function editorImageHandler(image: File, callback: (imageUrl: string) => void) {
       callback(res?.data?.data);
     } else showMessageNotice('red', res?.data?.message);
   }).catch(err => {console.error(err); showExceptionNotice();})
-
+}
+function editorFileUploadHandler(file: File, callback: (responseUrl: string) => void) {
+  const data = new FormData();
+  data.append('file', file, Date.now().toString());
+  httpSpring({
+    url: 'api/file/upload',
+    method: 'POST',
+    headers: {"Content-Type": "multipart/form-data", Authorization: window.localStorage.getItem('token')},
+    data: data
+  }).then(res => {
+    if (res?.data?.code === 0){
+      callback(res?.data?.data);
+    } else showMessageNotice('red', res?.data?.message);
+  }).catch(err => {console.error(err); showExceptionNotice();})
 }
 function initEditor() {
   import("@opentiny/fluent-editor").then(mod => {
@@ -160,16 +183,27 @@ function initEditor() {
         ]
       },
       uploadOption: {
-        imageUpload({ file, callback }) {
-          editorImageHandler(file, imageUrl => {
+        fileUpload: ({ file, callback }) => {
+          editorFileUploadHandler(file, (responseUrl) => {
+            callback({
+              code: 0,
+              message: 'Upload success!',
+              data: {
+                responseUrl,
+              },
+            });
+          });
+        },
+        imageUpload: ({ file, callback }) => {
+          editorImageHandler(file, (imageUrl) => {
             callback({
               code: 0,
               message: 'Upload success!',
               data: {
                 imageUrl,
               },
-            });
-          });
+            })
+          })
         },
       }
     });
@@ -178,8 +212,7 @@ function initEditor() {
       valueHtml.value = editor?.root.innerHTML || '';
       console.log(valueHtml.value);
     });
-    editor.on('change', () => {console.log("变化")})
-  })
+  });
 }
 onMounted(() => {
   initEditor();
@@ -198,6 +231,32 @@ watch(() => userArchivePinia.userArchive, (newVal: UserArchiveImpl) => {userArch
 </script>
 
 <template>
+  <el-dialog v-model="copperShow" class="copper_dialog" title="更换作品封面图">
+    <input type="file" style="display: none" accept="image/*" ref="coverInputRef" @change="selectCoverFile"/>
+    <div style="display: flex; align-items: end; gap: 20px">
+      <div class="cover_box" style="width: calc(250px*2); height: calc(130px*2); border: #DE91A9FF solid 1px">
+        <img v-if="coverImageValue" :src="coverImageValue" alt="cover" id="coverImage"
+             style="width: 100%; height: 100%;"/>
+        <div v-else
+             style="width: 100%;
+          height: 100%;
+            display: flex;
+             align-items: center;
+              justify-content: center">
+          <el-button native-type="button" @click="triggerInput">请选择图片</el-button>
+        </div>
+      </div>
+      <div class="image_preview_box">
+        <el-button v-if="coverImageValue" type="success" native-type="button" @click="uploadCoverClicked">确定使用</el-button>
+        <el-button v-if="coverImageValue" type="warning" native-type="button" @click="triggerInput">重新选择</el-button>
+        <p>250px * 130px效果</p>
+        <div class="image_preview"
+             style="width: 250px;
+          height: 130px;
+           border: #DE91A9FF 1px solid;overflow: hidden"></div>
+      </div>
+    </div>
+  </el-dialog>
 <!--  <input type="file" ref="editorImageInput" style="display: none;" @change="handleEditorImageUpload" />-->
   <header class="upload_works_header">
     <p class="upload_works_header_name">{{`${userArchive?.nickname|| '未命名'}`}}</p>
@@ -210,17 +269,6 @@ watch(() => userArchivePinia.userArchive, (newVal: UserArchiveImpl) => {userArch
         <button class="upload_button" @click="uploadButtonClicked" type="button">确认发布文章</button>
       </div>
       <div id="editor" style="height: 500px;"></div>
-<!--      <Toolbar-->
-<!--        style="border-bottom: 1px solid #ccc"-->
-<!--        :editor="editorRef"-->
-<!--        :defaultConfig="toolbarConfig"-->
-<!--      />-->
-<!--      <Editor-->
-<!--        style="height: 500px; overflow-y: hidden;"-->
-<!--        v-model="valueHtml"-->
-<!--        :defaultConfig="editorConfig"-->
-<!--        @onCreated="handleCreated"-->
-<!--      />-->
     </div>
     <div class="upload_works_form_box">
       <div v-if="allClassifyAndSubcategoryList">
@@ -243,7 +291,6 @@ watch(() => userArchivePinia.userArchive, (newVal: UserArchiveImpl) => {userArch
         <p class="upload_works_form_title">请输入作品简介（非必须）</p>
         <input class="upload_works_form_input_bar" type="text" placeholder="您可以在左侧自行设计简介" v-model="themeForm.introduce"/>
         <p class="upload_works_form_title">请上传作品封面图<span style="font-size: 14px; letter-spacing: 0; color: #811515">(请使用250px*130px像素图片)</span></p>
-        <input type="file" ref="fileInputRef" style="display: none;" @change="handleFileChange" accept="image/*" />
         <div class="upload_works_form_img_bar" v-if="imageDataUrl" @click="triggerFileInput">
           <img class="header_image" :src="imageDataUrl || ''" alt="header_img"/>
         </div>
