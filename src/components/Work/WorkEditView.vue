@@ -87,6 +87,8 @@ function fetchTheme (theme_id: string | undefined) {
 }
 
 const editThemeCheck = () => {
+  if (!themeDetail.value) {showExceptionNotice(); return;}
+  themeDetail.value.detail_html = valueHtml.value;
   httpSpring({
     url: 'api/theme/update',
     method: 'PUT',
