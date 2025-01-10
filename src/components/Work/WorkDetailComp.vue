@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import '@opentiny/fluent-editor/style.css';
 import {useRoute, useRouter} from "vue-router";
 import {onMounted, ref} from "vue";
 import {httpSpring} from "@/utils/http.ts";
@@ -13,7 +14,7 @@ interface ItemImpl{
 const itemList: Array<ItemImpl> = [
   {title: '修改', router_name: 'WorkEdit', explain: '仅对作品文章的内容进行修改'},
   {title: '删除', router_name: 'WorkDelete'},
-  {title: '评论', router_name: 'WorkComment'},
+  {title: '评论', router_name: 'WorkComment', explain: '功能尚在开发中'},
 ]
 
 const themeDetail = ref<ThemeImp | null>(null);
@@ -36,9 +37,13 @@ const itemClicked = (item: ItemImpl) => {
       } else showMessageNotice('red', res?.data?.message);
     }).catch(() => {showExceptionNotice();})
   }
+  function commentTheme (explain: string) {
+    showMessageNotice('red', explain);
+  }
   switch (item.router_name) {
     case 'WorkEdit': editTheme(); break;
     case 'WorkDelete': delectTheme(); break;
+    case 'WorkComment': commentTheme(item?.explain || ''); break;
     default: break;
   }
 }

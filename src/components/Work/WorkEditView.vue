@@ -5,7 +5,7 @@ import {nextTick, onMounted, ref} from "vue";
 import {showExceptionNotice, showMessageNotice} from "@/utils/MsgNotific.ts";
 import {httpSpring} from "@/utils/http.ts";
 import type {ThemeImp} from "@/interface/ThemeImp.ts";
-import type {FluentEditor} from "@opentiny/fluent-editor/types/fluent-editor";
+import type FluentEditor from '@opentiny/fluent-editor';
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css"
 const route = useRoute();
@@ -107,7 +107,34 @@ onMounted(() => {
 })
 
 let editor: FluentEditor;
-
+function editorImageHandler(image: File, callback: (imageUrl: string) => void) {
+  const data = new FormData();
+  data.append('file', image, Date.now().toString());
+  httpSpring({
+    url: 'api/file/upload',
+    method: 'POST',
+    headers: {"Content-Type": "multipart/form-data", Authorization: window.localStorage.getItem('token')},
+    data: data
+  }).then(res => {
+    if (res?.data?.code === 0){
+      callback(res?.data?.data);
+    } else showMessageNotice('red', res?.data?.message);
+  }).catch(err => {console.error(err); showExceptionNotice();})
+}
+function editorFileUploadHandler(file: File, callback: (responseUrl: string) => void) {
+  const data = new FormData();
+  data.append('file', file, Date.now().toString());
+  httpSpring({
+    url: 'api/file/upload',
+    method: 'POST',
+    headers: {"Content-Type": "multipart/form-data", Authorization: window.localStorage.getItem('token')},
+    data: data
+  }).then(res => {
+    if (res?.data?.code === 0){
+      callback(res?.data?.data);
+    } else showMessageNotice('red', res?.data?.message);
+  }).catch(err => {console.error(err); showExceptionNotice();})
+}
 function initEditor() {
   import("@opentiny/fluent-editor").then(mod => {
     const FluentEditor = mod.default;
@@ -125,6 +152,30 @@ function initEditor() {
           ['link', 'image', 'file', 'better-table'],
           ['emoji', 'video', 'formula', 'fullscreen'],
         ]
+      },
+      uploadOption: {
+        fileUpload: ({ file, callback }) => {
+          editorFileUploadHandler(file, (responseUrl) => {
+            callback({
+              code: 0,
+              message: 'Upload success!',
+              data: {
+                responseUrl,
+              },
+            });
+          });
+        },
+        imageUpload: ({ file, callback }) => {
+          editorImageHandler(file, (imageUrl) => {
+            callback({
+              code: 0,
+              message: 'Upload success!',
+              data: {
+                imageUrl,
+              },
+            })
+          })
+        },
       }
     });
     editor.root.innerHTML = valueHtml?.value || '';

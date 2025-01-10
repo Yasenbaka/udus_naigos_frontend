@@ -8,20 +8,20 @@ import {httpSpring} from "@/utils/http.ts";
 const userArchivePinia = useUserArchivePinia();
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css"
-import FluentEditor from "@opentiny/fluent-editor/types/fluent-editor";
+import FluentEditor from '@opentiny/fluent-editor';
 import {showExceptionNotice, showMessageNotice} from "@/utils/MsgNotific.ts";
 
-const toolbarConst = [
-  ['undo', 'redo', 'clean'],
-  [{ direction: 'rtl' }],
-  [{ header: [1, 2, 3, 4, 5, 6, false] }, { font: ['songti', 'yahei', 'kaiti', 'heiti', 'lishu', 'mono', 'arial', 'arialblack', 'comic', 'impact', 'times'] }, { size: ['12px', '14px', '16px', '18px', '20px', '24px', '32px', '36px', '48px', '72px'] }],
-  ['bold', 'italic', 'strike', 'underline'],
-  [{ color: [] }, { background: [] }],
-  [{ align: '' }, { align: 'center' }, { align: 'right' }],
-  [{ script: 'sub' }, { script: 'super' }],
-  ['link', 'image', 'file', 'better-table'],
-  ['emoji', 'video', 'formula', 'fullscreen'],
-]
+// const toolbarConst = [
+//   ['undo', 'redo', 'clean'],
+//   [{ direction: 'rtl' }],
+//   [{ header: [1, 2, 3, 4, 5, 6, false] }, { font: ['songti', 'yahei', 'kaiti', 'heiti', 'lishu', 'mono', 'arial', 'arialblack', 'comic', 'impact', 'times'] }, { size: ['12px', '14px', '16px', '18px', '20px', '24px', '32px', '36px', '48px', '72px'] }],
+//   ['bold', 'italic', 'strike', 'underline'],
+//   [{ color: [] }, { background: [] }],
+//   [{ align: '' }, { align: 'center' }, { align: 'right' }],
+//   [{ script: 'sub' }, { script: 'super' }],
+//   ['link', 'image', 'file', 'better-table'],
+//   ['emoji', 'video', 'formula', 'fullscreen'],
+// ]
 
 const valueHtml = ref<string>('<p>请在此做您的编辑！</p>')
 const userArchive = ref<UserArchiveImpl | null>(null);
@@ -64,7 +64,7 @@ const selectCoverFile = (e: Event) => {
   coverFilename = file.name;
   const reader = new FileReader();
   reader.readAsDataURL(file);
-  reader.onloadend = (e: Event) => {
+  reader.onloadend = () => {
     coverImageValue.value = String(reader.result);
     if (coverInputRef.value) coverInputRef.value.value = "";
     nextTick(() => {initCropper();})

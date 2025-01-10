@@ -27,9 +27,13 @@ function splitSearchInput (): Array<string> {
 }
 // 交集检索
 const intersectionSearchClicked = () => {
+  const keywords: Array<string> = splitSearchInput();
+  if (keywords.length === 0) {
+    showMessageNotice('red', '请输入关键词，多个关键词用#号分隔')
+    return;
+  }
   if (themeList.value === null) return;
   themeListShow.value = [];
-  const keywords: Array<string> = splitSearchInput();
   for (let i = 0; i < themeList.value.length; i++) {
     let isEligibleCount: number = 0;
     for (let j = 0; j < keywords.length; j++) {
@@ -44,8 +48,12 @@ const intersectionSearchClicked = () => {
 }
 // 并集检索
 const unionSearchClicked = () => {
-  if (themeList.value === null) return;
   const keywords: Array<string> = splitSearchInput();
+  if (keywords.length === 0) {
+    showMessageNotice('red', '请输入关键词，多个关键词用#号分隔')
+    return;
+  }
+  if (themeList.value === null) return;
   themeListShow.value = [];
   for (let i = 0; i < themeList.value.length; i++) {
     for (let j = 0; j < keywords.length; j++) {
