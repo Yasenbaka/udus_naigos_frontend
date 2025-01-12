@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import {useRouter} from "vue-router";
+const router = useRouter();
+
 interface ItemImpl {
   title: string; router_name: string; explain?: string;
 }
@@ -7,11 +10,15 @@ const itemList: Array<ItemImpl> = [
   {title: '上传文章', router_name: 'BlogUpload'},
   {title: '评论管理', router_name: 'BlogCommand'}
 ]
+
+const itemClicked = (router_name: string) => {
+  router.push({name: router_name});
+}
 </script>
 
 <template>
   <div class="blog_func_box">
-    <div class="blog_func_item" v-for="item in itemList" :key="item.router_name">{{item.title}}</div>
+    <div class="blog_func_item" v-for="item in itemList" :key="item.router_name" @click="itemClicked(item.router_name)">{{item.title}}</div>
   </div>
 </template>
 
