@@ -4,7 +4,7 @@ import {useRoute, useRouter} from "vue-router";
 import {httpSpring} from "@/utils/http.ts";
 import type {BlogImpl} from "@/interface/BlogImpl.ts";
 import {showExceptionNotice, showMessageNotice} from "@/utils/MsgNotific.ts";
-import {timestampToTime} from "../../utils/TimestampToTime.ts";
+import {timestampToTime} from "@/utils/TimestampToTime.ts";
 const route = useRoute();
 const router = useRouter();
 
@@ -19,6 +19,34 @@ const itemList: Array<ItemImpl> = [
 
 const blogDetail = ref<BlogImpl | null>(null);
 const blogLabel = ref<Array<string> | undefined>(undefined);
+
+const itemClicked = (item: ItemImpl): void => {
+  function commentBlog(explain: string) {
+    showMessageNotice('red', explain);
+  }
+  function deleteBlog() {
+    if (!blogDetail.value) {
+      showExceptionNotice();
+      return;
+    }
+    httpSpring({
+      url: 'api/blog/delete',
+      method: 'DELETE',
+      headers: {Authorization: window.localStorage.getItem('token')},
+      params: {blog_id: blogDetail.value.blog_id}
+    }).then(res => {
+      if (res?.data?.code === 0) {
+        showMessageNotice('green', res?.data?.data);
+        router.back();
+      } else showMessageNotice('red', res?.data?.message);
+    }).catch(() => {showExceptionNotice();})
+  }
+  switch (item.router_name) {
+    case 'BlogDelete': deleteBlog(); break;
+    case 'BlogComment': commentBlog(item?.explain || ''); break;
+    default: break;
+  }
+}
 
 function fetchBlogDetail(blog_id: string) {
   httpSpring({
@@ -53,25 +81,30 @@ onMounted(() => {
         <img class="blog_detail_cover" :src="blogDetail.cover_image" alt="cover_image" />
       </div>
       <div class="blog_detail_item_box">
-        <div class="blog_detail_item" v-for="item in itemList" :key="item.router_name" :title="item?.explain || undefined">
+        <div class="blog_detail_item"
+             v-for="item in itemList"
+             :key="item.router_name"
+             :title="item?.explain || undefined"
+             @click="itemClicked(item)"
+        >
           {{item.title}}
         </div>
       </div>
     </div>
-    <div class="blog_detail_information_box">
-      <div class="blog_detail_information" v-if="blogLabel">
+    <div class="blog_detail_information_box" v-if="blogDetail">
+      <div class="blog_detail_information">
         <p>文章标签：</p>
         <p v-for="(item, index) in blogLabel" :key="index">#{{item}}&nbsp;</p>
       </div>
-      <div class="blog_detail_information" v-if="blogLabel">
+      <div class="blog_detail_information">
         <p>文章附件：</p>
-        <p>{{blogDetail?.attachment? '存在': '不存在'}}</p>
+        <p>{{blogDetail.attachment? '存在': '不存在'}}</p>
       </div>
-      <div class="blog_detail_information" v-if="blogLabel">
+      <div class="blog_detail_information">
         <p>首次上传：</p>
         <p>{{timestampToTime(blogDetail.upload_date)}}</p>
       </div>
-      <div class="blog_detail_information" v-if="blogLabel">
+      <div class="blog_detail_information">
         <p>最后修改：</p>
         <p>{{timestampToTime(blogDetail.last_date)}}</p>
       </div>

@@ -21,25 +21,25 @@ async function fetchBlogList() {
   }).then(async res => {
     if (res?.data?.code === 0) {
       blogList.value = res?.data?.data;
-      if (blogList.value) {
-        for (let i = 0; i < blogList.value.length; i++) {
-          try {
-            const nicknameRes = await httpSpring({
-              url: 'users/other/nickname',
-              method: 'GET',
-              params: {uuid: blogList.value[i].author}
-            });
-            if (nicknameRes.data.code === 0) {
-              blogList.value[i].author_cn = nicknameRes.data.data;
-            } else {
-              blogList.value[i].author_cn = nicknameRes.data.message;
-            }
-          } catch (e) {
-            console.error(e);
-            blogList.value[i].author_cn = '请求错误';
-          }
-        }
-      }
+      // if (blogList.value) {
+      //   for (let i = 0; i < blogList.value.length; i++) {
+      //     try {
+      //       const nicknameRes = await httpSpring({
+      //         url: 'users/other/nickname',
+      //         method: 'GET',
+      //         params: {uuid: blogList.value[i].author}
+      //       });
+      //       if (nicknameRes.data.code === 0) {
+      //         blogList.value[i].author_cn = nicknameRes.data.data;
+      //       } else {
+      //         blogList.value[i].author_cn = nicknameRes.data.message;
+      //       }
+      //     } catch (e) {
+      //       console.error(e);
+      //       blogList.value[i].author_cn = '请求错误';
+      //     }
+      //   }
+      // }
     } else showMessageNotice('red', res?.data?.message);
   }).catch(() => {showExceptionNotice();});
 }
@@ -63,7 +63,7 @@ onMounted(() => {
         </div>
         <h2 class="blog_all_item_name">{{item.name}}</h2>
         <div class="blog_all_item_last_date_and_author">
-          <p>作者：{{item?.author_cn || '加载中…'}}</p>
+<!--          <p>作者：{{item?.author_cn || '加载中…'}}</p>-->
           <p>最后编辑时间：{{timestampToTime(item.last_date)}}</p>
         </div>
       </div>
