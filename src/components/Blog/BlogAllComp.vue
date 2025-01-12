@@ -75,7 +75,20 @@ onMounted(() => {
 </template>
 
 <style scoped lang="css">
+@keyframes blog_all_in {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .blog_all_box{
+  opacity: 0;
+  animation: blog_all_in .5s .4s forwards ease;
+  padding-top: 20px;
   width: 100%;
   display: flex;
   flex-wrap: wrap;

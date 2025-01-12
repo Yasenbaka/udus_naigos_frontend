@@ -19,7 +19,19 @@ watch(() => userArchivePinia.userArchive, (newVal: UserArchiveImpl) => {
 </template>
 
 <style scoped lang="css">
+@keyframes blog_header_in {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .blog_header {
+  opacity: 0;
+  animation: blog_header_in .5s forwards ease;
   margin: 0 auto;
   width: 80%;
   height: 120px;

@@ -16,7 +16,17 @@ const itemList: Array<ItemImpl> = [
 </template>
 
 <style scoped lang="css">
+@keyframes blog_func_in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 .blog_func_box{
+  opacity: 0;
+  animation: blog_func_in .5s .2s forwards ease;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
