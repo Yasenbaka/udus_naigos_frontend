@@ -4,7 +4,7 @@ export interface BlogImpl {
   content: string | null;
   author: string;
   upload_date: number;
-  last_data: number;
+  last_date: number;
   attachment: string | null;
   classify_id: string | null;
   blog_id: string;

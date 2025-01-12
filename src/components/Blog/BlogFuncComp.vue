@@ -17,7 +17,6 @@ const itemList: Array<ItemImpl> = [
 
 <style scoped lang="css">
 .blog_func_box{
-  margin-bottom: 30px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
