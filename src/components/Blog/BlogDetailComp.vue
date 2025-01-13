@@ -21,6 +21,10 @@ const blogDetail = ref<BlogImpl | null>(null);
 const blogLabel = ref<Array<string> | undefined>(undefined);
 
 const itemClicked = (item: ItemImpl): void => {
+  function editBlog(routerName: string) {
+    if (!blogDetail.value) return;
+    router.push({name: routerName, query: {blog_id: blogDetail.value.blog_id}})
+  }
   function commentBlog(explain: string) {
     showMessageNotice('red', explain);
   }
@@ -44,6 +48,7 @@ const itemClicked = (item: ItemImpl): void => {
   switch (item.router_name) {
     case 'BlogDelete': deleteBlog(); break;
     case 'BlogComment': commentBlog(item?.explain || ''); break;
+    case 'BlogEdit': editBlog(item.router_name); break;
     default: break;
   }
 }
