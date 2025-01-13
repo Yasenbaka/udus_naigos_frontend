@@ -170,6 +170,7 @@ function initEditor() {
     editor.root.innerHTML = '<p>请输入内容</p>';
     editor.on('text-change', () => {
       blogLoaderForm.value.content = editor?.root.innerHTML || '';
+      console.log(blogLoaderForm.value.content);
     });
   });
 }

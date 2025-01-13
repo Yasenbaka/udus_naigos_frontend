@@ -1,4 +1,5 @@
 @import './base.css';
+@import "@opentiny/fluent-editor/style.css";
 
 /*#app {*/
 /*  max-width: 1280px;*/

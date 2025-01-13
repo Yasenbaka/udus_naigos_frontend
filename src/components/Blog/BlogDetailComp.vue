@@ -114,9 +114,9 @@ onMounted(() => {
         <p>{{timestampToTime(blogDetail.last_date)}}</p>
       </div>
       <div class="blog_detail_html_box">
-        <h2>文章内容</h2>
+        <h2 class="blog_detail_html_title">文章内容</h2>
         <hr/>
-        <div v-if="blogDetail.content" v-html="blogDetail.content"></div>
+        <div v-if="blogDetail.content" v-html="blogDetail.content" class="ql-editor"></div>
         <div v-else>无内容</div>
       </div>
     </div>
@@ -143,7 +143,9 @@ onMounted(() => {
   .blog_detail_html_box{
     margin-top: 20px;
     width: 100%;
-    text-align: center;
+    .blog_detail_html_title{
+      text-align: center;
+    }
     hr{
       margin: 10px auto;
     }

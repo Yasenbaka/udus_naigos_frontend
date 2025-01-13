@@ -89,7 +89,7 @@ onMounted(() => {
         <h2>作品详情</h2>
         <hr/>
       </div>
-      <div style="margin: 0 auto" v-html="themeDetail.detail_html"></div>
+      <div style="margin: 0 auto" v-html="themeDetail.detail_html" class="ql-editor"></div>
     </div>
   </div>
 </template>
