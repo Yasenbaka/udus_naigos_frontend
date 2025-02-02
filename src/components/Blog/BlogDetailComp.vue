@@ -81,9 +81,9 @@ onMounted(() => {
 <template>
   <div class="blog_detail_box" v-if="blogDetail">
     <h1 class="blog_detail_name">{{blogDetail.name}}</h1>
-    <div class="blog_detail_cover_and_item_box" v-if="blogDetail.cover_image">
+    <div class="blog_detail_cover_and_item_box" v-if="blogDetail.cover_image_800">
       <div class="blog_detail_cover_box">
-        <img class="blog_detail_cover" :src="blogDetail.cover_image" alt="cover_image" />
+        <img class="blog_detail_cover" :src="blogDetail.cover_image_800" alt="cover_image" />
       </div>
       <div class="blog_detail_item_box">
         <div class="blog_detail_item"
