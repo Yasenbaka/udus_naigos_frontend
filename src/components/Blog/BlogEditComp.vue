@@ -55,28 +55,63 @@ const selectCoverFile = (e: Event) => {
     nextTick(() => {initCropper();})
   }
 }
+const handleUploadCover = (blob: Blob, saveTarget: number) => {
+  console.log('diaoyong');
+  const fileName = `${Date.now()}_${coverFilename}_${saveTarget === 0? '400': saveTarget === 1? '800': '1200'}`;
+  const formData = new FormData();
+  formData.append("file", blob, fileName);
+  httpSpring({
+    url: 'api/file/upload',
+    method: "POST",
+    headers: {"Content-Type": "multipart/form-data", Authorization: window.localStorage.getItem("token")},
+    data: formData
+  }).then(res => {
+    if (res?.data?.code === 0) {
+      if (!blogDetail.value) return;
+      switch (saveTarget) {
+        case 0: {
+          blogDetail.value.cover_image = res?.data?.data;
+          showMessageNotice('green', res?.data?.message + '：400px');
+          break;
+        }
+        case 1: {
+          blogDetail.value.cover_image_800 = res?.data?.data;
+          showMessageNotice('green', res?.data?.message + '：800px');
+          break;
+        }
+        case 2: {
+          blogDetail.value.cover_image_1200 = res?.data?.data;
+          showMessageNotice('green', res?.data?.message + '：1200px');
+          break;
+        }
+        default: break;
+      }
+    } else showMessageNotice('red', res?.data?.message);
+  }).catch(() => {showExceptionNotice();});
+}
 const uploadCoverClicked = () => {
   const cropperCanvas = cropper?.getCroppedCanvas({
     width: 400, height: 115, imageSmoothingEnabled: true, imageSmoothingQuality: "high"
   });
   cropperCanvas?.toBlob(blob => {
     if (blob) {
-      console.log(blob);
-      const fileName = `${Date.now()}_${coverFilename}`;
-      const formData = new FormData();
-      formData.append("file", blob, fileName);
-      httpSpring({
-        url: "api/file/upload",
-        method: "POST",
-        headers: {"Content-Type": "multipart/form-data", Authorization: window.localStorage.getItem("token")},
-        data: formData
-      }).then(res => {
-        if (res?.data?.code === 0) {
-          showMessageNotice('green', res?.data?.message);
-          if (blogDetail.value) blogDetail.value.cover_image = res?.data?.data;
-          copperShow.value = false;
-        } else showMessageNotice('red', res?.data?.message);
-      }).catch(err => {console.error(err); showExceptionNotice();})
+      handleUploadCover(blob, 0);
+    }
+  })
+  const cropperCanvas800 = cropper?.getCroppedCanvas({
+    width: 800, height: 230, imageSmoothingEnabled: true, imageSmoothingQuality: "high"
+  });
+  cropperCanvas800?.toBlob(blob => {
+    if (blob) {
+      handleUploadCover(blob, 1);
+    }
+  })
+  const cropperCanvas1200 = cropper?.getCroppedCanvas({
+    width: 1200, height: 345, imageSmoothingEnabled: true, imageSmoothingQuality: "high"
+  });
+  cropperCanvas1200?.toBlob(blob => {
+    if (blob) {
+      handleUploadCover(blob, 2);
     }
   })
 }
