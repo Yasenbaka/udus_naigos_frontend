@@ -4,8 +4,14 @@ import {useUserArchivePinia} from "@/stores/UserArchivePinia.ts";
 import {onMounted, ref, watch} from "vue";
 import type {UserArchiveImpl} from "@/interface/UserArchiveImpl.ts";
 const userArchivePinia = useUserArchivePinia();
+import {useRouter} from "vue-router";
+const router = useRouter();
 
 const userArchive = ref<UserArchiveImpl>({...userArchivePinia.userArchive});
+
+const itemClicked = (target: string) => {
+  router.push({name: target});
+}
 
 onMounted(() => {
   if (window.localStorage.getItem('token')) {
@@ -27,7 +33,7 @@ watch(() => userArchivePinia.userArchive, (newVal: UserArchiveImpl) => {
         <li>电子邮箱：{{userArchive.email}}</li>
       </ul>
     </div>
-    <div class="home_user_space_box">
+    <div class="home_user_space_box" @click="itemClicked('SaveSpace')">
       <p class="home_user_space_detail">最大存储空间：200 MB</p>
       <p class="home_user_space_detail">已用存储空间：0 MB</p>
       <p class="home_user_space_detail">剩余存储空间：200 MB</p>
