@@ -18,9 +18,19 @@ const fetchStorage = () => {
       const storageIcon = document.getElementById('free_storage_i');
       if (!storageIcon) return;
       let proportionBy: number = (1 - ((bucketDetail.value.size/(1024 * 1024)) / (bucketDetail.value.max_size/(1024 * 1024)))) * 100;
+      console.log('proportion', proportionBy);
       if (bucketDetail.value.size === -1) proportionBy = 100;
       storageIcon.style.width = `${proportionBy}%`;
-      if (0 <= proportionBy && proportionBy < 10) {
+      if (proportionBy <= 0) {
+        storageIcon.style.backgroundColor = '#ff0000';
+        storageIcon.style.width = '100%';
+        const characterCN = document.getElementById('character_cn');
+        const characterData = document.getElementById('character_data');
+        if (characterCN && characterData) {
+          characterCN.style.color = '#fff';
+          characterData.style.color = '#fff';
+        }
+      } else if (0 < proportionBy && proportionBy < 10) {
         storageIcon.style.backgroundColor = '#ff0000';
       }  else if (10 <= proportionBy && proportionBy < 50) {
         storageIcon.style.backgroundColor = '#fff200';
@@ -40,8 +50,8 @@ onMounted(() => {
   <div class="free_storage_box">
     <i id="free_storage_i"></i>
     <div class="free_storage_character_box">
-      <p class="free_storage_character">存储空间</p>
-      <p class="free_storage_character_data">{{bucketDetail?.size_text || '0MB'}}(Used) / {{bucketDetail?.max_size_text || '0MB'}}(Max)</p>
+      <p class="free_storage_character" id="character_cn">存储空间</p>
+      <p class="free_storage_character_data" id="character_data">{{bucketDetail?.size_text || '0MB'}}(Used) / {{bucketDetail?.max_size_text || '0MB'}}(Max)</p>
     </div>
   </div>
 </template>
