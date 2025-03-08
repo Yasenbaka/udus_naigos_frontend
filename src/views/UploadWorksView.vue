@@ -40,13 +40,13 @@ const themeCSForm = ref<{
     category_value: string;
   }
 }>({classify: {classify_id: null, classify_value: ''}, subcategory: {subcategory: '', category_value: ''}});
+const themeIdCustom = ref<string | null>(null);
 const imageDataUrl = ref<string | null>(null);
 const copperShow = ref<boolean>(false);
 const coverImageValue = ref<string | null>(null);
 const coverInputRef = ref<HTMLInputElement | null>(null);
 
 let coverFilename: string | undefined = undefined;
-
 let cropper: Cropper | null = null;
 const triggerInput = () => {if (coverInputRef.value) coverInputRef.value.click();}
 const initCropper = () => {
@@ -116,6 +116,9 @@ const uploadButtonClicked = () => {
   }
   themeForm.value.classify_id = themeCSForm.value.classify.classify_id;
   themeForm.value.theme_id = `${themeCSForm.value.classify.classify_value}_${themeCSForm.value.subcategory.category_value}`;
+  if (themeIdCustom.value) {
+    themeForm.value.theme_id += `_${themeIdCustom.value}`;
+  }
   themeForm.value.detail_html = valueHtml.value;
   themeForm.value.header_image = imageDataUrl.value;
   if (themeForm.value.name === '') {console.log('themeFormName为空'); return;}
@@ -284,6 +287,8 @@ watch(() => userArchivePinia.userArchive, (newVal: UserArchiveImpl) => {userArch
             <input type="radio" name="subcategory_radio" :value="item" v-model="themeCSForm.subcategory"/>{{item.zhsg_name}}
           </label>
         </div>
+        <p class="upload_works_form_title">作品ID号</p>
+        <input class="upload_works_form_input_bar" type="text" placeholder="自定义作品ID号，尽量保证代表您的作品，优先英文" v-model="themeIdCustom"/>
         <p class="upload_works_form_title">请输入作品名</p>
         <input class="upload_works_form_input_bar" type="text" placeholder="请输入…" v-model="themeForm.name"/>
         <p class="upload_works_form_title">请输入作品下载地址（非必须）</p>
