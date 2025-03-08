@@ -6,6 +6,30 @@ import type {FileObjectImpl} from "@/interface/FIleImpl.ts";
 import {showExceptionNotice, showMessageNotice} from "@/utils/MsgNotific.ts";
 
 const fileObjects = ref<Array<FileObjectImpl> | null>(null);
+const objectDialog = ref<{isDialog: boolean; object: FileObjectImpl | null}>({isDialog: false, object: null});
+
+const deleteObject = (object: FileObjectImpl | null): void => {
+  if (object === null) {
+    showExceptionNotice();
+    return;
+  }
+  httpSpring({
+    url: 'api/file/delete',
+    method: 'DELETE',
+    headers: {Authorization: window.localStorage.getItem('token')},
+    params: {object_name: object.name}
+  }).then(res => {
+    if (res?.data?.code === 0) {
+      showMessageNotice('green', res?.data?.data);
+      fetchMinioItems();
+      objectDialog.value.isDialog = false;
+    } else showMessageNotice('red', res?.data?.message);
+  }).catch(() => {showExceptionNotice();});
+}
+
+const itemClicked = (object: FileObjectImpl) => {
+  objectDialog.value = {isDialog: true, object: object};
+}
 
 const fetchMinioItems = () => {
   httpSpring({
@@ -32,8 +56,18 @@ onMounted(() => {
 </script>
 
 <template>
+  <el-dialog v-model="objectDialog.isDialog" :title="`文件：${objectDialog.object?.name}`" append-to-body destroy-on-close align-center>
+    <div class="dialog_body" style="display: flex; justify-content: center; flex-direction: column;">
+      <div class="dialog_body_image_box" style="width: 100%; text-align: center;">
+        <img :src="objectDialog.object?.url" alt="image" style="max-width: 100%; max-height: 500px"/>
+      </div>
+      <div class="dialog_body_buttons" style="text-align: center;">
+        <el-button type="danger" @click="deleteObject(objectDialog.object)">删除该文件</el-button>
+      </div>
+    </div>
+  </el-dialog>
   <div class="save_space_item_box" v-if="fileObjects">
-    <div class="save_space_item" v-for="item in fileObjects" :key="item.name">
+    <div class="save_space_item" v-for="item in fileObjects" :key="item.name" @click="itemClicked(item)">
       <div class="save_space_item_cover_box">
         <img class="save_space_item_cover" v-if="item.isImage" :src="item.url" alt="image"/>
         <img class="save_space_item_cover" v-else :src="fileSvg" alt="image"/>
