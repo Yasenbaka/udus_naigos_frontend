@@ -6,6 +6,7 @@ const itemList: Array<{title: string, router_name: string, img_url: string | nul
   {title: '学习笔记', router_name: 'Note', img_url: null, title_en: 'Learning notes'},
   {title: '博客文章', router_name: 'Blog', img_url: null, title_en: 'Blog articles'},
   {title: '作品成果', router_name: 'Work', img_url: null, title_en: 'Works'},
+  {title: '蔚蓝档案', router_name: 'BlueArchive', img_url: null, title_en: 'Blue archive'},
 ]
 const itemClicked = (routerName: string) => {
   router.push({name: routerName});

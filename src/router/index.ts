@@ -9,6 +9,7 @@ import BlogRouter from "@/router/RouterList/BlogRouter.ts";
 import WorkRouter from "@/router/RouterList/WorkRouter.ts";
 import WorkEditView from "@/components/Work/WorkEditView.vue";
 import SaveSpaceRouter from "@/router/RouterList/SaveSpaceRouter.ts";
+import BlueArchiveRouter from "@/router/RouterList/BlueArchiveRouter.ts";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,6 +24,7 @@ const router = createRouter({
     UploadWorksRouter,
     UploadBlogRouter,
     SaveSpaceRouter,
+    BlueArchiveRouter,
   ],
 })
 
