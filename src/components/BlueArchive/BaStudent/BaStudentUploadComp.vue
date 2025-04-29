@@ -194,7 +194,7 @@ watch(() => student.value.en_name, (newVal: string | null) => {
 
 <template>
   <el-container>
-    <el-aside style="width: 200px">
+    <el-aside style="width: 200px; max-height: calc(100vh - 56px);">
       <el-menu
         background-color="#ffd04b80"
         style="min-height: calc(100vh - 56px);"
@@ -208,7 +208,7 @@ watch(() => student.value.en_name, (newVal: string | null) => {
         </el-menu-item>
       </el-menu>
     </el-aside>
-    <el-aside style="width: 200px" v-if="isSchoolClubShow">
+    <el-aside style="width: 200px; max-height: calc(100vh - 56px);" v-if="isSchoolClubShow">
       <el-menu
         background-color="#1289f880"
         style="min-height: calc(100vh - 56px);"
