@@ -6,7 +6,7 @@ import BaStudentSideMenuComp from "@/components/BlueArchive/BaStudent/BaStudentS
 <template>
   <el-container>
     <BaStudentSideMenuComp/>
-    <el-main style="padding: 0">
+    <el-main style="padding: 0; max-height: calc(100vh - 56px);">
       <RouterView/>
     </el-main>
   </el-container>
