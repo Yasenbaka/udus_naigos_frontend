@@ -7,9 +7,9 @@ const itemClicked = (routerName: string) => {
 }
 
 const menuList: Array<{title: string; router_name: string}> = [
-  {title: '新增学生', router_name: 'BlueArchiveStudentUpload'},
-  {title: '更改学生', router_name: 'BlueArchiveStudentUpdate'},
-  {title: '删除学生', router_name: 'BlueArchiveStudentDelete'},
+  {title: '新增学园', router_name: 'BlueArchiveSchoolUpload'},
+  {title: '更改学园', router_name: 'BlueArchiveSchoolUpdate'},
+  {title: '删除学园', router_name: 'BlueArchiveSchoolDelete'},
 ]
 </script>
 
@@ -22,7 +22,7 @@ const menuList: Array<{title: string; router_name: string}> = [
           background-color="#1289f880"
           active-text-color="#ffd04b"
           text-color="#fff"
-          default-active="BlueArchiveStudentUpload"
+          default-active="BlueArchiveSchoolUpload"
         >
           <el-menu-item @click="itemClicked(item.router_name)" v-for="(item, index) in menuList" :index="item.router_name" :key="index">{{item.title}}</el-menu-item>
         </el-menu>
